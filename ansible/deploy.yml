@@ -1,0 +1,32 @@
+---
+- hosts: dockerhost
+  become: yes
+  tasks:
+    - name: Update APT package index
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull Docker Image
+      docker_image:
+        name: lararoft19/app
+        source: pull
+
+    - name: Run Docker Container
+      docker_container:
+        name: app_container
+        image: lararoft19/app
+        state: started
+        ports:
+          - "80:80"
+
